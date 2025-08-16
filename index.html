@@ -1,1 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>I Miss You ❤️</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background-color: black;
+    }
+
+    .popup {
+      position: absolute;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      font-weight: bold;
+      font-size: 18px;
+      color: white;
+      text-shadow: 0 0 5px hotpink, 0 0 10px pink;
+      white-space: nowrap;
+      animation: floatAround linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes floatAround {
+      0% {
+        transform: translate(0, 0) rotate(0deg);
+        opacity: 1;
+      }
+      25% {
+        transform: translate(-50px, 80px) rotate(10deg);
+      }
+      50% {
+        transform: translate(100px, 150px) rotate(-10deg);
+        opacity: 0.9;
+      }
+      75% {
+        transform: translate(-120px, 200px) rotate(5deg);
+      }
+      100% {
+        transform: translate(0, 0) rotate(0deg);
+        opacity: 0;
+      }
+    }
+
+    .dialog {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: black;
+      padding: 20px;
+      border-radius: 10px;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      font-size: 24px;
+      color: white;
+      text-align: center;
+      box-shadow: 0 0 15px pink;
+      z-index: 1000;
+    }
+
+    .heart {
+      position: fixed;
+      top: -50px;
+      color: pink;
+      font-size: 24px;
+      animation: fall linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes fall {
+      to {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    .love-message {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.5);
+      font-size: 48px;
+      font-weight: bold;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      color: white;
+      text-shadow:
+        0 0 5px #ff66cc,
+        0 0 10px #ff99cc,
+        0 0 20px #ff66cc,
+        0 0 40px #ff3399;
+      opacity: 0;
+      animation: zoomIn 3s ease forwards, blink 1.2s infinite;
+      z-index: 9999;
+      white-space: nowrap;
+      display: none;
+    }
+
+    @keyframes zoomIn {
+      0% {
+        transform: translate(-50%, -50%) scale(0.5);
+        opacity: 0;
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(1.5);
+        opacity: 1;
+      }
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+
+    @media screen and (max-width: 600px) {
+      .popup {
+        font-size: 14px;
+      }
+
+      .dialog {
+        font-size: 18px;
+      }
+
+      .love-message {
+        font-size: 32px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="startDialog" class="dialog">Click vào đây nhaaa! 💖</div>
+
+  <audio id="backgroundMusic" src="assets/music.mp3" loop></audio>
+
+  <div id="loveMessage" class="love-message">I Love You 💖</div>
+
+  <script>
+    const dialog = document.getElementById("startDialog");
+    const audio = document.getElementById("backgroundMusic");
+    const loveMessage = document.getElementById("loveMessage");
+
+    let heartsInterval;
+    let popupsInterval;
+
+    function createPopup() {
+      const popup = document.createElement("div");
+      popup.className = "popup";
+      popup.textContent = "I Miss You! ❤️";
+
+      const screenWidth = window.innerWidth;
+      const screenHeight = window.innerHeight;
+
+      const x = Math.random() * (screenWidth - 150);
+      const y = Math.random() * (screenHeight - 50);
+
+      popup.style.left = `${x}px`;
+      popup.style.top = `${y}px`;
+
+      const duration = 5 + Math.random() * 5;
+      popup.style.animationDuration = `${duration}s`;
+
+      document.body.appendChild(popup);
+
+      setTimeout(() => {
+        popup.remove();
+      }, duration * 1000);
+    }
+
+    function startPopups(count) {
+      let created = 0;
+      popupsInterval = setInterval(() => {
+        if (created >= count) {
+          clearInterval(popupsInterval);
+          return;
+        }
+        createPopup();
+        created++;
+      }, 100);
+    }
+
+    function enterFullscreen() {
+      const elem = document.documentElement;
+      if (elem.requestFullscreen) {
+        elem.requestFullscreen();
+      } else if (elem.webkitRequestFullscreen) {
+        elem.webkitRequestFullscreen();
+      }
+    }
+
+    function createFallingHeart() {
+      const heart = document.createElement("div");
+      heart.className = "heart";
+      heart.textContent = "💖";
+
+      heart.style.left = `${Math.random() * 100}vw`;
+      heart.style.fontSize = `${Math.random() * 20 + 10}px`;
+      heart.style.animationDuration = `${Math.random() * 3 + 3}s`;
+
+      document.body.appendChild(heart);
+      setTimeout(() => heart.remove(), 5000);
+    }
+
+    function startFallingHearts() {
+      heartsInterval = setInterval(createFallingHeart, 300);
+    }
+
+    function stopAll() {
+      clearInterval(heartsInterval);
+      clearInterval(popupsInterval);
+      document.querySelectorAll(".popup, .heart").forEach(el => el.remove());
+      audio.pause();
+      audio.currentTime = 0;
+    }
+
+    function showLoveMessage() {
+      loveMessage.style.display = "block";
+    }
+
+    document.addEventListener("click", function startExperience() {
+      dialog.style.display = "none";
+      audio.play().catch(error => {
+        console.log("Lỗi phát nhạc:", error);
+      });
+
+      enterFullscreen();
+      startPopups(300);
+      startFallingHearts();
+
+      setTimeout(() => {
+        stopAll();
+        showLoveMessage();
+      }, 40000);
+
+      document.removeEventListener("click", startExperience);
+    });
+  </script>
+</body>
+</html>
 
